@@ -1,4 +1,4 @@
-import {useState, useRef} from "react"
+import {useState, useRef,useEffect} from "react"
 //Blogging App using Hooks
 export default function Blog(){
     
@@ -9,6 +9,23 @@ export default function Blog(){
     // Blogs is state of empty arrayit store prev blog
     //Passing the synthetic event as argument to stop refreshing the page on submit
     const titleRef = useRef(null);
+
+    useEffect(()=>{
+        titleRef.current.focus();
+    },[])
+// intial render focus on title field
+
+    useEffect(()=>{
+
+        if(blogs.length && blogs[0].title){
+            document.title = blogs[0].title;
+        }
+        else{
+            document.title = "No Blogs";
+        }
+
+        
+    },[blogs])
 
     function handleSubmit(e){
         e.preventDefault();
@@ -54,6 +71,7 @@ export default function Blog(){
                         <textarea className="input content"
                                 placeholder="Content of the Blog goes here.."
                                 value={formData.content}
+                                required
                                 onChange={(e)=>setForm({title:formData.title,
                                     content:e.target.value,
                                 })}/>
