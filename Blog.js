@@ -1,19 +1,30 @@
-import {useState} from "react"
+import {useState, useRef} from "react"
 //Blogging App using Hooks
 export default function Blog(){
     
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+    // const [title, setTitle] = useState("");
+    // const [content, setContent] = useState("");
+    const [formData, setForm] = useState({title:"",content:""})
     const [blogs,setBlogs] = useState([]);
     // Blogs is state of empty arrayit store prev blog
     //Passing the synthetic event as argument to stop refreshing the page on submit
-    
+    const titleRef = useRef(null);
+
     function handleSubmit(e){
         e.preventDefault();
 
-        setBlogs([{title,content},...blogs]);
+        setBlogs([{title:formData.title,content:formData.content},...blogs]);
         //Using the rest operator to bcoz prev we setting blog one object so prev lost
-        //althrough this state is our array,if we want things as same then use 
+        //althrough this state is our array,if we want things as same then use rest 
+        setForm({title:"", content:""});
+        //setForm.content("");
+        titleRef.current.focus();// focus back on title after add button click
+    }
+
+    function removeBlog(i) {
+      
+        setBlogs(blogs.filter((blog,index)=> i!==index));
+
     }
 
     return(
@@ -31,16 +42,21 @@ export default function Blog(){
                 <Row label="Title">
                         <input className="input"
                                 placeholder="Enter the Title of the Blog here.."
-                                value={title}
-                                onChange={(e)=>setTitle(e.target.value)}/>
+                                value={formData.title}
+                                ref={titleRef}
+                                onChange={(e)=>setForm({title:e.target.value,
+                                    content:formData.content
+                                })}/>
                 </Row >
 
                 {/* Row component to create a row for Text area field */}
                 <Row label="Content">
                         <textarea className="input content"
                                 placeholder="Content of the Blog goes here.."
-                                value={content}
-                                onChange={(e)=>setContent(e.target.value)}/>
+                                value={formData.content}
+                                onChange={(e)=>setForm({title:formData.title,
+                                    content:e.target.value,
+                                })}/>
                 </Row >
 
                 {/* Button to submit the blog */}            
@@ -53,8 +69,19 @@ export default function Blog(){
 
         {/* Section where submitted blogs will be displayed */}
         <h2> Blogs </h2>
-        <h3>{title}</h3>
-        <p>{content}</p>
+           {blogs.map((blog,i) =>(
+            <div className="blog" key={i}>
+            <h3>{blog.title}</h3>
+            <p>{blog.content}</p>
+
+            <div className="blog-btn">
+            <button onClick={() => removeBlog(i)} className="btn remove">
+            Delete
+            </button>
+            </div>
+            </div>
+    ))}
+        
         </>
         )
     }
