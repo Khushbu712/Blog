@@ -1,6 +1,6 @@
 import {useState, useRef,useEffect} from "react"
 import {db} from "./firebaseinit"
-import {collection,addDoc,doc} from "firebase/firestore";
+import {collection,addDoc,doc,setDoc} from "firebase/firestore";
 
 // very useful for calculator app
 
@@ -16,14 +16,15 @@ export default function Blog(){
         titleRef.current.focus()
     },[])
 
-    
+ // setDoc useful when we want to give our own id   
         
 
     async function handleSubmit(e){
         e.preventDefault();
         titleRef.current.focus();
 
-         await addDoc(collection(db, "blogs"), {
+        const docRef = doc(collection(db, "blogs"))
+         await setDoc(docRef, {
             title: formData.title,
             content: formData.content,
             createdOn: new Date()
